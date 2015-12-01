@@ -4,6 +4,8 @@
 
 For example, the word count sample in Apache Spark can be implemented in C# as follows :
 
+Test AppVeyor
+
 ```c#
 var lines = sparkContext.TextFile(@"hdfs://path/to/input.txt");  
 var words = lines.FlatMap(s => s.Split(new[] { " " }, StringSplitOptions.None));
@@ -57,7 +59,8 @@ Refer to the [docs folder](docs).
 
 ## Building SparkCLR
 
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/Microsoft/SparkCLR?svg=true&branch=master)](https://ci.appveyor.com/project/skaarthik/SparkCLR/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/lflkua81gg0swv6i/branch/master?svg=true)](https://ci.appveyor.com/project/SparkCLR/sparkclr/branch/master)
+
 
 ### Prerequisites
 

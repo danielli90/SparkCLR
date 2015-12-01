@@ -16,6 +16,7 @@ install:
 branches:
   only:
     - master
+    - appveyor
 #build C# solution and scala project
 build_script:
 - cmd: >-
