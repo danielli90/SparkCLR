@@ -9,13 +9,15 @@ build_script:
 
 # scripts to run after tests
 after_test:
-  - cmd: Runsamples.cmd --validate
+#  - cmd: Runsamples.cmd --validate
+  - cmd: dir csharp\Microsoft.SparkCLR.1.0.0.nupkg
 
 deploy:
   provider: NuGet
   # server:                  # remove to push to NuGet.org
   api_key:
     secure: 8/aUEkMI5hEiCETWDwHnRk7VXF5bPVMjrtGqYhLmDt/1A2uy8N8UwioZENNGGmdm
-  skip_symbols: false
+  skip_symbols: true
   # symbol_server:           # remove to push symbols to SymbolSource.org
-  artifact: /.*\.nupkg/
+  # artifact: /.*\.nupkg/
+  artifact: csharp\Microsoft.SparkCLR.1.0.0.nupkg
