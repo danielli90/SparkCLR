@@ -12,9 +12,9 @@ test:
     - csharp\AdapterTest\bin\Debug\AdapterTest.dll
 
 # scripts to run after tests
-after_test:
+#after_test:
 #  - cmd: Runsamples.cmd --validate
-  - cmd: dir csharp\Microsoft.SparkCLR.1.0.0.nupkg
+#  - cmd: dir csharp\Microsoft.SparkCLR.*nupkg
 
 artifacts:          
   - path: '**\*.nupkg' # find all NuGet packages recursively
