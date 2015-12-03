@@ -52,7 +52,7 @@ if EXIST %PROJ_NAME%.nuspec (
   SET STEP=NuGet-Pack
 
   powershell -f ..\scripts\nugetpack.ps1
-  # nuget pack %PROJ_NAME%.nuspec
+  @rem nuget pack %PROJ_NAME%.nuspec
   @if ERRORLEVEL 1 GOTO :ErrorStop
   @echo NuGet package ok for %PROJ%
 )

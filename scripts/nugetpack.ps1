@@ -3,7 +3,8 @@
 $root = (split-path -parent $MyInvocation.MyCommand.Definition) + '\..'
 # $version = [System.Reflection.Assembly]::LoadFile("$root\MarkdownLog\bin\Release\MarkdownLog.dll").GetName().Version
 # $versionStr = "{0}.{1}.{2}" -f ($version.Major, $version.Minor, $version.Build)
-$versionStr = "1.0.{0}" -f ([Environment]::GetEnvironmentVariable("APPVEYOR_BUILD_NUMBER"))
+# $versionStr = "1.0.{0}" -f ([Environment]::GetEnvironmentVariable("APPVEYOR_BUILD_NUMBER"))
+$versionStr = "{0}.{1}" -f ([Environment]::GetEnvironmentVariable("APPVEYOR_BUILD_VERSION"), [Environment]::GetEnvironmentVariable("APPVEYOR_BUILD_NUMBER"))
 
 Write-Host "Setting .nuspec version tag to $versionStr"
 
