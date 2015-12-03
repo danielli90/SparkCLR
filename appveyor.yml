@@ -12,6 +12,9 @@ after_test:
 #  - cmd: Runsamples.cmd --validate
   - cmd: dir csharp\Microsoft.SparkCLR.1.0.0.nupkg
 
+artifacts:          
+  - path: '**\*.nupkg' # find all NuGet packages recursively
+
 deploy:
   provider: NuGet
   # server:                  # remove to push to NuGet.org
@@ -20,4 +23,8 @@ deploy:
   skip_symbols: true
   # symbol_server:           # remove to push symbols to SymbolSource.org
   # artifact: /.*\.nupkg/
-  artifact: csharp\Microsoft.SparkCLR.1.0.0.nupkg
+  # artifact: Microsoft.SparkCLR.1.0.0.nupkg
+  artifact: /.*\.nupkg/
+
+
+
