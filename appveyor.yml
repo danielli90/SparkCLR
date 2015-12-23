@@ -30,8 +30,7 @@ deploy:
   auth_token:
     secure: PUPef6+F9OpqLV4Y/Uv+N6dwppAwtvxXWfsgmHR6F9dpVVwdFrZIDSVrF6M+nBuL # your encrypted token from GitHub
   #artifact: /.*\.nupkg/            # upload all NuGet packages to release assets
-  artifact: /Microsoft.*\.nupkg/
-  artifact: /spark-clr.*\.jar/
+  artifact: /Microsoft.*\.nupkg/,/spark-clr.*\.jar/
   draft: true 
   prerelease: true
   on:
