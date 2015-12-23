@@ -18,16 +18,16 @@ test:
 #  - cmd: Runsamples.cmd --validate
 #  - cmd: dir csharp\Microsoft.SparkCLR.*nupkg
 
-artifacts:          
-  - path: '**\Microsoft*.nupkg' # find all NuGet packages recursively
+# artifacts:          
+#  - path: '**\Microsoft*.nupkg' # find all NuGet packages recursively
 
-deploy:
-  provider: NuGet
-  # server:                  # remove to push to NuGet.org
-  api_key:
-    secure: 8/aUEkMI5hEiCETWDwHnRk7VXF5bPVMjrtGqYhLmDt/1A2uy8N8UwioZENNGGmdm
-  skip_symbols: true
-  # symbol_server:           # remove to push symbols to SymbolSource.org
-  # artifact: /.*\.nupkg/
-  # artifact: Microsoft.SparkCLR.1.0.0.nupkg
-  artifact: /Microsoft.*\.nupkg/
+# deploy:
+#   provider: NuGet
+#   # server:                  # remove to push to NuGet.org
+#   api_key:
+#     secure: 8/aUEkMI5hEiCETWDwHnRk7VXF5bPVMjrtGqYhLmDt/1A2uy8N8UwioZENNGGmdm
+#   skip_symbols: true
+#   # symbol_server:           # remove to push symbols to SymbolSource.org
+#   # artifact: /.*\.nupkg/
+#   # artifact: Microsoft.SparkCLR.1.0.0.nupkg
+#   artifact: /Microsoft.*\.nupkg/
