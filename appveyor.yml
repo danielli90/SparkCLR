@@ -1,4 +1,4 @@
-version: 1.4.1-SNAPSHOT.{build}
+version: 1.4.1-SNAPSHOT-{build}
 
 #build C# solution and scala project
 build_script:
@@ -18,8 +18,23 @@ test:
 #  - cmd: Runsamples.cmd --validate
 #  - cmd: dir csharp\Microsoft.SparkCLR.*nupkg
 
-# artifacts:          
-#  - path: '**\Microsoft*.nupkg' # find all NuGet packages recursively
+artifacts:          
+  - path: '**\Microsoft*.nupkg' # find all NuGet packages recursively
+
+deploy:
+  release: testsparkclr-$(appveyor_repo_tag_name)
+  description: 'test sparkclr release'
+  provider: GitHub
+  auth_token:
+    secure: PUPef6+F9OpqLV4Y/Uv+N6dwppAwtvxXWfsgmHR6F9dpVVwdFrZIDSVrF6M+nBuL # your encrypted token from GitHub
+  #artifact: /.*\.nupkg/            # upload all NuGet packages to release assets
+  artifact: /Microsoft.*\.nupkg/
+  draft: true 
+  prerelease: true
+  on:
+    # branch: master                 # release from master branch only
+    branch: appv                   # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
 
 # deploy:
 #   provider: NuGet
