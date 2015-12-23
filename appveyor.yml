@@ -14,12 +14,14 @@ test:
     - csharp\AdapterTest\bin\Debug\AdapterTest.dll
 
 # scripts to run after tests
-#after_test:
+after_test:
 #  - cmd: Runsamples.cmd --validate
-#  - cmd: dir csharp\Microsoft.SparkCLR.*nupkg
+  - cmd: dir csharp\Microsoft.SparkCLR.*nupkg
+  - cmd: dir scala\target\spark-clr*.jar
 
 artifacts:          
   - path: '**\Microsoft*.nupkg' # find all NuGet packages recursively
+  - path: 'scala\target\spark-clr*.jar' # find all NuGet packages recursively
 
 deploy:
   release: testsparkclr-$(appveyor_repo_tag_name)
@@ -29,6 +31,7 @@ deploy:
     secure: PUPef6+F9OpqLV4Y/Uv+N6dwppAwtvxXWfsgmHR6F9dpVVwdFrZIDSVrF6M+nBuL # your encrypted token from GitHub
   #artifact: /.*\.nupkg/            # upload all NuGet packages to release assets
   artifact: /Microsoft.*\.nupkg/
+  artifact: /spark-clr.*\.jar/
   draft: true 
   prerelease: true
   on:
