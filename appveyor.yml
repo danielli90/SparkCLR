@@ -16,7 +16,7 @@ test:
 # scripts to run after tests
 after_test:
 #  - cmd: Runsamples.cmd --validate
-  - cmd: dir csharp\Microsoft.SparkCLR.*nupkg
+  - cmd: dir csharp\Microsoft*.nupkg
   - cmd: dir scala\target\spark-clr*.jar
 
 artifacts:          
