@@ -38,16 +38,18 @@ deploy:
       # branch: appv                   # release from master branch only
       appveyor_repo_tag: true          # deploy on tag push only
 
-#   - provider: NuGet
-#    # server:                  # remove to push to NuGet.org
-#     api_key:
-#       secure: 8/aUEkMI5hEiCETWDwHnRk7VXF5bPVMjrtGqYhLmDt/1A2uy8N8UwioZENNGGmdm
-#     skip_symbols: true
-#    # symbol_server:           # remove to push symbols to SymbolSource.org
-#    # artifact: /.*\.nupkg/
-#    # artifact: Microsoft.SparkCLR.1.0.0.nupkg
-#     artifact: /Microsoft.*\.nupkg/
-#    # on: <== not supported other than GitHub - need to play trick in build.cmd
-#     # branch: master                 # release from master branch only
-#     # branch: appv                   # release from master branch only
-#     # appveyor_repo_tag: true          # deploy on tag push only
+  - provider: NuGet
+    # server:                  # remove to push to NuGet.org
+    api_key:
+      secure: 8/aUEkMI5hEiCETWDwHnRk7VXF5bPVMjrtGqYhLmDt/1A2uy8N8UwioZENNGGmdm
+    skip_symbols: true
+    # symbol_server:           # remove to push symbols to SymbolSource.org
+    # artifact: /.*\.nupkg/
+    # artifact: Microsoft.SparkCLR.1.0.0.nupkg
+    artifact: /Microsoft.*\.nupkg/
+    on:
+      appveyor_repo_tag: true          # deploy on tag push only
+    # on: <== not supported other than GitHub - need to play trick in build.cmd
+    # branch: master                 # release from master branch only
+    # branch: appv                   # release from master branch only
+    # appveyor_repo_tag: true          # deploy on tag push only
