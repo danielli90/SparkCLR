@@ -94,6 +94,17 @@
       </dependency>
   </dependencies>
 
+<distributionManagement>
+  <snapshotRepository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </snapshotRepository>
+  <repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+  </repository>
+</distributionManagement>
+
   <build>
       <sourceDirectory>src/main</sourceDirectory>
       <testSourceDirectory>src/test/scala</testSourceDirectory>
@@ -101,6 +112,7 @@
           <plugin>
               <groupId>org.scala-tools</groupId>
               <artifactId>maven-scala-plugin</artifactId>
+              <version>2.15.2</version>
               <executions>
                   <execution>
                       <goals>
@@ -141,6 +153,22 @@
                   </execution>
               </executions>
           </plugin>
+          <!--The comment below is the placeholder by build.cmd to add shade-plugin and others. Please keep as-is-->
+          <!--OTHER PLUGINS-->
+      </plugins>
+  </build>
+
+    <profiles>
+        <profile>
+            <id>check-scala-style</id>
+            <activation>
+                <property>
+                    <name>doSytleCheck</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+            <plugins>
           <plugin>
               <groupId>org.scalastyle</groupId>
               <artifactId>scalastyle-maven-plugin</artifactId>
@@ -165,8 +193,63 @@
               </execution>
           </executions>
           </plugin>
-          <!--The comment below is the placeholder by build.cmd to add shade-plugin and others. Please keep as-is-->
-          <!--OTHER PLUGINS-->
-      </plugins>
-  </build>
+            </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>generate-signed-files</id>
+            <activation>
+                <property>
+                    <name>doSign</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- sign stuff for maven-central via OSSRH/Sonatype -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release-to-ossrh</id>
+            <activation>
+                <property>
+                    <name>doRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.5</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+  
+  
+
 </project>
