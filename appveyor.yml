@@ -15,6 +15,7 @@ install:
   - cmd: secure-file\tools\secure-file -decrypt build\data\private_token.asc.enc -secret %securefile% -out build\data\private_token.asc
   - cmd: secure-file\tools\secure-file -decrypt build\data\public_token.asc.enc -secret %securefile% -out build\data\public_token.asc
   - cmd: secure-file\tools\secure-file -decrypt build\data\ownertrustblob.txt.enc -secret %securefile% -out  build\data\ownertrustblob.txt
+  - cmd: if not exist "%USERPROFILE%\.m2" mkdir %USERPROFILE%\.m2
   - ps: ((Get-Content build\data\settings.xml) -replace "{user}", "$env:ossrh-user" -replace "{pass}", "$env:ossrh-pass" -replace "{passphrase}", "$env:gpg-pass") | Set-Content "$env:USERPROFILE\.m2\settings.xml" -force
 # debug; To be removed
   - cmd: type %USERPROFILE%\.m2\settings.xml
