@@ -11,12 +11,7 @@ environment:
     secure: 5IchMuHkc/kngre44VUIxA==
 
 install:
-  - ps: $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-   | $x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
-   | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
-   | Sort-Object -Property DisplayName `
-   | Select-Object -Property DisplayName,DisplayVersion
-   | Write-Host("x64Items = $xt4items")
+  - cmd: powershell -f dumpsoftware.ps1
   - cmd: nuget install secure-file -ExcludeVersion
   - cmd: secure-file\tools\secure-file -decrypt build\data\private_token.asc.enc -secret %securefile% -out build\data\private_token.asc
   - cmd: secure-file\tools\secure-file -decrypt build\data\public_token.asc.enc -secret %securefile% -out build\data\public_token.asc
