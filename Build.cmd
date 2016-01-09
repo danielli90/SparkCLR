@@ -54,15 +54,17 @@ powershell -f ..\scripts\addotherplugin.ps1 pom.xml other-plugin.xml "<!--OTHER 
 IF NOT DEFINED APPVEYOR (goto :nosign)
 IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
 
-@rem if exist "%ProgramFiles(x86)%\GNU\GnuPG\pub\gpg2.exe"
+@rem install gnupg for signing
+if not exist "%ProgramFiles(x86)%\GNU\GnuPG\pub\gpg2.exe" (
+    choco install gpg4win-vanilla -y -f
+    set path=%path%;%ProgramFiles(x86)%\GNU\GnuPG\pub
+)
+
 @rem check and download chocolatey if not available
 @rem IF EXIST "%ALLUSERSPROFILE%\chocolatey\bin" (goto :chocodone)
 @rem @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
 @rem :chocodone
 
-@rem install gnupg for signing
-choco install gpg4win-vanilla -y -f
-set path=%path%;%ProgramFiles(x86)%\GNU\GnuPG\pub
 
 @rem install signing keys
 gpg2 --batch --yes --import build\data\private_token.asc
