@@ -48,44 +48,26 @@ call mvn.cmd clean
 copy /y pom.xml %temp%\pom.xml.original
 powershell -f ..\scripts\addotherplugin.ps1 pom.xml other-plugin.xml "<!--OTHER PLUGINS-->"
 
-@rem 
-@rem signing and deployment only when APPVEYOR_REPO_TAG is available
+@rem prepare signing only when APPVEYOR_REPO_TAG is available
 @rem
 IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
 
-@rem echo check for gpg2...
-@rem 
-@rem @rem install gnupg for signing
-@rem if not exist "%ProgramFiles(x86)%\GNU\GnuPG\pub\gpg2.exe" (
-@rem     choco uninstall gpg4win-vanilla  -y -f
-@rem     choco uninstall gpg4win  -y -f
-@rem     choco uninstall gpg4win-light  -y -f
-@rem 
-@rem     choco install gpg4win-vanilla -y -f -d
-@rem )
-@rem 
-@rem echo got gpg4win
-@rem set path=%ProgramFiles(x86)%\GNU\GnuPG\pub;%path%
-
-@rem check and download chocolatey if not available
-@rem IF EXIST "%ALLUSERSPROFILE%\chocolatey\bin" (goto :chocodone)
-@rem @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
-@rem :chocodone
-
-@rem install signing keys
-echo ready to install signing keys
 gpg2 --batch --yes --import ..\build\data\private_token.asc
 gpg2 --batch --yes --import ..\build\data\public_token.asc
+
 pushd %APPDATA%\gnupg 
 del /q trustdb.gpg 
 popd
 gpg2 --batch --yes --import-ownertrust < ..\build\data\ownertrustblob.txt
+
 gpg2 --list-key
 
+@rem ProjectVersion is set in downloadtools.ps1, based on AppVeyor-Repo-Tag
 if DEFINED ProjectVersion (
   echo call mvn versions:set -DnewVersion=%ProjectVersion%
   call mvn versions:set -DnewVersion=%ProjectVersion%
 )
+
 call mvn clean deploy -DdoSign=true -DdoRelease=true
 goto :mvndone
 
