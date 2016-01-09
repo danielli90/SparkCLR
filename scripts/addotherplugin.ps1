@@ -91,6 +91,20 @@ Replace-VariableInFile $variable $otherPlugin $targetPom $tempPom
 $content = (Get-Content $tempPom)
 $content = $content -replace '<!--\s*<scope>provided</scope>\s*-->', '<scope>provided</scope>'
 
+# replace the version in pom.xml with REPO_TAG
+$tagName = $env:APPVEYOR_REPO_TAG_NAME
+Write-Host "[addotherplugin.ps1] [INFO] tagname=[$tagName]"
+
+if (($tagName.Length -gt 1) -and ($tagName.SubString(0,1).ToLower() -eq "v"))
+{
+    $len = $tagName.Length - 1
+    $versionStr = $tagName.SubString(1, $len)
+
+    Write-Host "[addotherplugin.ps1] [INFO] Setting pom.xml version tag to $versionStr"
+
+    $content = $content -replace "<version>.*</version>", "<version>$versionStr</version>"
+}
+
 $content | Out-File $targetPom -force
 
 Write-Output "[addotherplugin.ps1] updated $targetPom"
