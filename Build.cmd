@@ -58,7 +58,8 @@ echo check for gpg2...
 
 @rem install gnupg for signing
 if not exist "%ProgramFiles(x86)%\GNU\GnuPG\pub\gpg2.exe" (
-    choco install gpg4win-vanilla -y -f
+    choco uninstall gpg4win-vanilla  -y -f
+    choco install gpg4win-vanilla -y -f -d
 )
 
 echo got gpg4win
