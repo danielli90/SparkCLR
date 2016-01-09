@@ -82,6 +82,10 @@ popd
 gpg2 --batch --yes --import-ownertrust < ..\build\data\ownertrustblob.txt
 gpg2 --list-key
 
+if DEFINED ProjectVersion (
+  echo call mvn versions:set -DnewVersion=%ProjectVersion%
+  call mvn versions:set -DnewVersion=%ProjectVersion%
+)
 call mvn clean deploy -DdoSign=true -DdoRelease=true
 goto :mvndone
 

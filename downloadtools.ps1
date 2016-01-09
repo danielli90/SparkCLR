@@ -252,6 +252,19 @@ function Download-BuildTools
     	}
     }
 
+    # set projectversion with repo-tag
+    $tagName = $env:APPVEYOR_REPO_TAG_NAME
+    Write-Host "[downloadtools.Download-BuildTools] [INFO] tagname=[$tagName]"
+    
+    if (($tagName.Length -gt 1) -and ($tagName.SubString(0,1).ToLower() -eq "v"))
+    {
+        $len = $tagName.Length - 1
+        $versionStr = $tagName.SubString(1, $len)
+    
+        Write-Host "[downloadtools.Download-BuildTools] [INFO] Setting project version to $versionStr"
+        $envStream.WriteLine("set ProjectVersion=$versionStr");
+    }
+
     $envStream.close()
 }
 
