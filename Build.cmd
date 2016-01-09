@@ -74,12 +74,12 @@ IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
 
 @rem install signing keys
 echo ready to install signing keys
-gpg2 --batch --yes --import build\data\private_token.asc
-gpg2 --batch --yes --import build\data\public_token.asc
+gpg2 --batch --yes --import ..\build\data\private_token.asc
+gpg2 --batch --yes --import ..\build\data\public_token.asc
 pushd %APPDATA%\gnupg 
 del /q trustdb.gpg 
 popd
-gpg2 --batch --yes --import-ownertrust < build\data\ownertrustblob.txt
+gpg2 --batch --yes --import-ownertrust < ..\build\data\ownertrustblob.txt
 gpg2 --list-key
 
 call mvn clean deploy -DdoSign=true -DdoRelease=true
