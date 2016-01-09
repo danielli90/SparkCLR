@@ -53,19 +53,19 @@ powershell -f ..\scripts\addotherplugin.ps1 pom.xml other-plugin.xml "<!--OTHER 
 @rem
 IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
 
-echo check for gpg2...
-
-@rem install gnupg for signing
-if not exist "%ProgramFiles(x86)%\GNU\GnuPG\pub\gpg2.exe" (
-    choco uninstall gpg4win-vanilla  -y -f
-    choco uninstall gpg4win  -y -f
-    choco uninstall gpg4win-light  -y -f
-
-    choco install gpg4win-vanilla -y -f -d
-)
-
-echo got gpg4win
-set path=%ProgramFiles(x86)%\GNU\GnuPG\pub;%path%
+@rem echo check for gpg2...
+@rem 
+@rem @rem install gnupg for signing
+@rem if not exist "%ProgramFiles(x86)%\GNU\GnuPG\pub\gpg2.exe" (
+@rem     choco uninstall gpg4win-vanilla  -y -f
+@rem     choco uninstall gpg4win  -y -f
+@rem     choco uninstall gpg4win-light  -y -f
+@rem 
+@rem     choco install gpg4win-vanilla -y -f -d
+@rem )
+@rem 
+@rem echo got gpg4win
+@rem set path=%ProgramFiles(x86)%\GNU\GnuPG\pub;%path%
 
 @rem check and download chocolatey if not available
 @rem IF EXIST "%ALLUSERSPROFILE%\chocolatey\bin" (goto :chocodone)
