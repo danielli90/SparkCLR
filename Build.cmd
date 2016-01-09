@@ -65,14 +65,16 @@ if not exist "%ProgramFiles(x86)%\GNU\GnuPG\pub\gpg2.exe" (
 @rem @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
 @rem :chocodone
 
-
 @rem install signing keys
+echo "ready to install signing keys"
+set path=%ProgramFiles(x86)%\GNU\GnuPG\pub;%path%
 gpg2 --batch --yes --import build\data\private_token.asc
 gpg2 --batch --yes --import build\data\public_token.asc
 pushd %APPDATA%\gnupg 
 del /q trustdb.gpg 
 popd
 gpg2 --batch --yes --import-ownertrust < build\data\ownertrustblob.txt
+gpg2 --list-key
 
 call mvn clean deploy -DdoSign=true -DdoRelease=true
 goto :mvndone
