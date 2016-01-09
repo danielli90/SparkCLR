@@ -1,5 +1,24 @@
 version: 1.4.1-SNAPSHOT-{build}
 
+environment:
+  securefile:          
+    secure: dVnljNkoUuyLwvG/24pF42oxfi8BJZxDkjQiKq7Kek8=
+  ossrh-user:          
+    secure: NJhMjV65B+9lTzFHtJh5NQ==
+  ossrh-pass:          
+    secure: 8w42vlmbPBgPaYrOA/zrPv+aCSyEiNEzQudrGbIVEmk=
+  gpg-pass:          
+    secure: 5IchMuHkc/kngre44VUIxA==
+
+install:
+  - cmd: nuget install secure-file -ExcludeVersion
+  - cmd: secure-file\tools\secure-file -decrypt build\data\private_token.asc.enc -secret %securefile% -out build\data\private_token.asc
+  - cmd: secure-file\tools\secure-file -decrypt build\data\public_token.asc.enc -secret %securefile% -out build\data\public_token.asc
+  - cmd: secure-file\tools\secure-file -decrypt build\data\ownertrustblob.txt.enc -secret %securefile% -out  build\data\ownertrustblob.txt
+  - ps: ((Get-Content settings.xml) -replace "{user}", "$env:ossrh-user" -replace "{pass}", "$env:ossrh-pass" -replace "{passphrase}", "$env:gpg-pass") | Set-Content %USERPROFILE%\.m2\settings.xml -force
+# debug; To be removed
+  - cmd: type %USERPROFILE%\.m2\settings.xml
+
 #build C# solution and scala project
 build_script:
   - cmd: echo appvenyor env BUILD_NUMBER=[%APPVEYOR_BUILD_NUMBER%] BUILD_VERSION=[%APPVEYOR_BUILD_VERSION%] REPO_TAG=[%APPVEYOR_REPO_TAG%] REPO_TAG_NAME=[%APPVEYOR_REPO_TAG_NAME%] APPVEYOR=[%APPVEYOR%] CI=[%CI%]
@@ -38,14 +57,14 @@ deploy:
       # branch: appv                   # release from master branch only
       appveyor_repo_tag: true          # deploy on tag push only
 
-  - provider: NuGet
-    # server:                  # remove to push to NuGet.org
-    api_key:
-      secure: 8/aUEkMI5hEiCETWDwHnRk7VXF5bPVMjrtGqYhLmDt/1A2uy8N8UwioZENNGGmdm
-    skip_symbols: false 
-    # symbol_server:           # remove to push symbols to SymbolSource.org
-#    # artifact: /.*\.nupkg/
-#    # artifact: Microsoft.SparkCLR.1.0.0.nupkg
-    artifact: /Microsoft.*\.nupkg/
-    on:
-      appveyor_repo_tag: true          # deploy on tag push only
+# ##  - provider: NuGet
+# ##    # server:                  # remove to push to NuGet.org
+# ##    api_key:
+# ##      secure: 8/aUEkMI5hEiCETWDwHnRk7VXF5bPVMjrtGqYhLmDt/1A2uy8N8UwioZENNGGmdm
+# ##    skip_symbols: false 
+# ##    # symbol_server:           # remove to push symbols to SymbolSource.org
+# ###    # artifact: /.*\.nupkg/
+# ###    # artifact: Microsoft.SparkCLR.1.0.0.nupkg
+# ##    artifact: /Microsoft.*\.nupkg/
+# ##    on:
+# ##      appveyor_repo_tag: true          # deploy on tag push only

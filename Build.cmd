@@ -47,17 +47,48 @@ call mvn.cmd clean
 @rem
 copy /y pom.xml %temp%\pom.xml.original
 powershell -f ..\scripts\addotherplugin.ps1 pom.xml other-plugin.xml "<!--OTHER PLUGINS-->"
+
+@rem 
+@rem signing and deployment only when APPVEYOR_REPO_TAG is available
+@rem
+IF NOT DEFINED APPVEYOR (goto :nosign)
+IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
+
+@rem if exist "%ProgramFiles(x86)%\GNU\GnuPG\pub\gpg2.exe"
+@rem check and download chocolatey if not available
+@rem IF EXIST "%ALLUSERSPROFILE%\chocolatey\bin" (goto :chocodone)
+@rem @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
+@rem :chocodone
+
+@rem install gnupg for signing
+choco install gpg4win-vanilla -y -f
+set path=%path%;%ProgramFiles(x86)%\GNU\GnuPG\pub
+
+@rem install signing keys
+gpg2 --batch --yes --import build\data\private_token.asc
+gpg2 --batch --yes --import build\data\public_token.asc
+pushd %APPDATA%\gnupg 
+del /q trustdb.gpg 
+popd
+gpg2 --batch --yes --import-ownertrust < build\data\ownertrustblob.txt
+
+call mvn clean deploy -DdoSign=true -DdoRelease=true
+goto :mvndone
+
+:nosign
 @rem build the package
 call mvn.cmd package
+
+:mvndone
 @rem
 @rem After uber package is created, restore Pom.xml
 @rem
 copy /y %temp%\pom.xml.original pom.xml
 
 if %ERRORLEVEL% NEQ 0 (
-	@echo Build SparkCLR Scala components failed, stop building.
-	popd
-	goto :eof
+    @echo Build SparkCLR Scala components failed, stop building.
+    popd
+    goto :eof
 )
 @echo SparkCLR Scala binaries
 copy /y target\*.jar "%SPARKCLR_HOME%\lib\"
@@ -81,9 +112,9 @@ call Clean.cmd
 call Build.cmd
 
 if %ERRORLEVEL% NEQ 0 (
-	@echo Build SparkCLR C# components failed, stop building.
-	popd
-	goto :eof
+    @echo Build SparkCLR C# components failed, stop building.
+    popd
+    goto :eof
 )
 @echo SparkCLR C# binaries
 copy /y Worker\Microsoft.Spark.CSharp\bin\Release\* "%SPARKCLR_HOME%\bin\"
