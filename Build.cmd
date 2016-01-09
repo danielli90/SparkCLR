@@ -51,7 +51,6 @@ powershell -f ..\scripts\addotherplugin.ps1 pom.xml other-plugin.xml "<!--OTHER 
 @rem 
 @rem signing and deployment only when APPVEYOR_REPO_TAG is available
 @rem
-IF NOT DEFINED APPVEYOR (goto :nosign)
 IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
 
 echo check for gpg2...
