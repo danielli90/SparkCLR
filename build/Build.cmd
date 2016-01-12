@@ -66,6 +66,7 @@ IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
     @rem ProjectVersion is set in downloadtools.ps1, based on AppVeyor-Repo-Tag
     if DEFINED ProjectVersion (
       set SPARKCLR_NAME=spark-clr_2.10-%ProjectVersion%
+      echo SPARKCLR_NAME=%SPARKCLR_NAME%
       echo call mvn versions:set -DnewVersion=%ProjectVersion%
       call mvn versions:set -DnewVersion=%ProjectVersion%
     )
