@@ -143,7 +143,7 @@ if not defined SPARKCLR_NAME (
 set SUBMIT-CMD=.\run\scripts\sparkclr-submit.cmd
 if defined SPARKCLR_NAME (
     @rem update sparkclr version in sparkclr-submit batch file
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "((Get-Content %SUBMIT-CMD%) -replace '(set SPARKCLR_JAR=.*)', 'set SPARKCLR_JAR=%SPARKCLR_NAME%.jar)') | Set-Content %SUBMIT-CMD% -force"
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "((Get-Content %SUBMIT-CMD%) -replace '\(set SPARKCLR_JAR=.*\)', '(set SPARKCLR_JAR=%SPARKCLR_NAME%.jar)') | Set-Content %SUBMIT-CMD% -force"
 
     @rem Create the zip file to be deployed to GitHub release
     7z a .\target\%SPARKCLR_NAME%.zip run localscript
