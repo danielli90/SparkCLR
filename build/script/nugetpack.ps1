@@ -21,4 +21,4 @@ else
     Copy-Item $root\csharp\SparkCLR.nuspec $root\csharp\SparkCLR.compiled.nuspec -force
 }
 
-& $root\tools\NuGet.exe pack $root\csharp\SparkCLR.compiled.nuspec -Symbols
+& $root\build\tools\NuGet.exe pack $root\csharp\SparkCLR.compiled.nuspec -Symbols
