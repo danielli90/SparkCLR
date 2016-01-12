@@ -134,7 +134,7 @@ popd
 @echo Assemble SparkCLR script components
 xcopy /e /y "%CMDHOME%\..\scripts"  "%SPARKCLR_HOME%\scripts\"
 
-@echo zip run directory
+@echo Make distribution
 pushd %~dp0
 if not exist ".\target" (mkdir .\target)
 
@@ -144,12 +144,12 @@ if not defined SPARKCLR_NAME (
 
 set SUBMIT-CMD=.\run\scripts\sparkclr-submit.cmd
 if defined SPARKCLR_NAME (
-    @rem update sparkclr version in sparkclr-submit batch file
+    @rem update sparkclr version in sparkclr-submit.cmd file
     powershell -NoProfile -ExecutionPolicy Bypass -Command "((Get-Content %SUBMIT-CMD%) -replace '\(set SPARKCLR_JAR=.*\)', '(set SPARKCLR_JAR=%SPARKCLR_NAME%.jar)') | Set-Content %SUBMIT-CMD% -force"
 
-    @rem Create the zip file to be deployed to GitHub release
-    echo 7z a .\target\%SPARKCLR_NAME%.zip run localscript
-    7z a .\target\%SPARKCLR_NAME%.zip run localscript
+    @rem Create the zip file
+    @echo 7z a .\target\%SPARKCLR_NAME%.zip run localscript ..\examples
+    7z a .\target\%SPARKCLR_NAME%.zip run localscript ..\examples
 )
 
 popd
