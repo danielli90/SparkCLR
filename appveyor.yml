@@ -1,14 +1,24 @@
 version: 1.5.2-SNAPSHOT.{build}
 
+# environment:
+#   securefile:          
+#     secure: Ytj1W9EwvU5JP+PlFUQ7CSing7qenLuDgUNbniX8BAY=
+#   ossrh-user:          
+#     secure: T9zNd6DB0T6PXfUfxo5W2w==
+#   ossrh-pass:          
+#     secure: 39ewTowxhIB09wMhP1rU+SJ6MahjvGTlJTO/VH+v8/M=
+#   gpg-pass:          
+#     secure: t8UyjbNBnWJLrl8XFS/MbQ==
+
 environment:
   securefile:          
-    secure: Ytj1W9EwvU5JP+PlFUQ7CSing7qenLuDgUNbniX8BAY=
+    secure: dVnljNkoUuyLwvG/24pF42oxfi8BJZxDkjQiKq7Kek8=
   ossrh-user:          
-    secure: T9zNd6DB0T6PXfUfxo5W2w==
+    secure: NJhMjV65B+9lTzFHtJh5NQ==
   ossrh-pass:          
-    secure: 39ewTowxhIB09wMhP1rU+SJ6MahjvGTlJTO/VH+v8/M=
+    secure: 8w42vlmbPBgPaYrOA/zrPv+aCSyEiNEzQudrGbIVEmk=
   gpg-pass:          
-    secure: t8UyjbNBnWJLrl8XFS/MbQ==
+    secure: 5IchMuHkc/kngre44VUIxA==
 
 install:
   # - cmd: powershell -f build\script\dumpsoftware.ps1
@@ -28,6 +38,7 @@ build_script:
   - cmd: cd .\build
   - cmd: .\Build.cmd
   - cmd: cd ..
+  - cmd: dir .\build\target\*.zip
 
 # need test section below - otherwise auto discovery will run samples will fail build (since it has no text fixtures)
 test:
@@ -41,28 +52,31 @@ after_test:
     - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
     - pip install codecov
     - codecov -f "SparkCLRCodeCoverage.xml"
-    - cmd: cd .\build
+    - cmd: cd .\build\localscript
     - cmd: .\Runsamples.cmd --validate
-    - cmd: cd ..
+    - cmd: cd ..\..
     - cmd: dir csharp\Microsoft*.nupkg
     - cmd: dir scala\target\spark-clr*.jar
 
 artifacts:          
   - path: '**\Microsoft*.nupkg'                 # find all NuGet packages recursively
   - path: 'scala\target\spark-clr*.jar'
+  - path: 'build\target\spark-clr*.zip'
 
 deploy:
   - provider: GitHub                            # deploy to GitHub releases
     auth_token:                                 
-      secure: 4JIzL2DO3OXXjdrso+VhA0RjMvUAg8BnZRHXojswaryXFe9mDJ3ExjssASWL1FZq 
-    artifact: /Microsoft.*\.nupkg/,/spark-clr.*\.jar/
+      # secure: 4JIzL2DO3OXXjdrso+VhA0RjMvUAg8BnZRHXojswaryXFe9mDJ3ExjssASWL1FZq 
+      secure: PUPef6+F9OpqLV4Y/Uv+N6dwppAwtvxXWfsgmHR6F9dpVVwdFrZIDSVrF6M+nBuL # your encrypted token from GitHub
+    # artifact: /Microsoft.*\.nupkg/,/spark-clr.*\.jar/
+    artifact: /spark-clr.*\.zip/
     on:
       appveyor_repo_tag: true                   # deploy on tag push only
 
-  - provider: NuGet                             # deploy to NuGet.org
-    api_key:                                    
-      secure: TscZXMoOxrMfjR2TvGBns6b+IILWvo0WJpxikoGsMCqEcMj/x41Le1j8dHTCJMjI
-    skip_symbols: false                         # push symbols to SymbolSource.org
-    artifact: /Microsoft.*\.nupkg/
-    on:
-      appveyor_repo_tag: true                   # deploy on tag push only
+#   - provider: NuGet                             # deploy to NuGet.org
+#     api_key:                                    
+#       secure: TscZXMoOxrMfjR2TvGBns6b+IILWvo0WJpxikoGsMCqEcMj/x41Le1j8dHTCJMjI
+#     skip_symbols: false                         # push symbols to SymbolSource.org
+#     artifact: /Microsoft.*\.nupkg/
+#     on:
+#       appveyor_repo_tag: true                   # deploy on tag push only

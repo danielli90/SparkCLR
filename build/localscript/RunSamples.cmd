@@ -35,12 +35,13 @@ powershell -Command Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unre
 @rem download runtime dependencies
 pushd %~dp0
 powershell -f downloadtools.ps1 run !VERBOSE!
-call tools\updateruntime.cmd
+call ..\tools\updateruntime.cmd
 popd
 
 @rem downloadtools.ps1 sets ProjectVersion when invoked in AppVeyor
 if defined ProjectVersion (
-    set SPARKCLR_JAR=spark-clr_2.10-%ProjectVersion%.jar
+    set SPARKCLR_NAME=spark-clr_2.10-%ProjectVersion%
+    set SPARKCLR_JAR=%SPARKCLR_NAME%.jar
     echo [RunSamples.cmd] SPARKCLR_JAR=%SPARKCLR_JAR%
 )
 
@@ -48,7 +49,7 @@ SET CMDHOME=%~dp0
 @REM Remove trailing backslash \
 set CMDHOME=%CMDHOME:~0,-1%
 
-set SPARKCLR_HOME=%CMDHOME%\run
+set SPARKCLR_HOME=%CMDHOME%\..\run
 set SPARKCSV_JARS=
 
 @rem RunSamples.cmd is in local mode, should not load Hadoop or Yarn cluster config. Disable Hadoop/Yarn conf dir.

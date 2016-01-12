@@ -2,7 +2,7 @@
 setlocal
 
 @rem check prerequisites
-call precheck.cmd
+call .\localscript\precheck.cmd
 
 if %precheck% == "bad" (goto :eof)
 
@@ -11,7 +11,7 @@ powershell -Command Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 
 @rem download build tools
 pushd %~dp0
-powershell -f downloadtools.ps1 build
+powershell -f localscript\downloadtools.ps1 build
 call tools\updatebuildtoolenv.cmd
 popd
 
@@ -32,7 +32,6 @@ if NOT EXIST "%SPARKCLR_HOME%\bin" mkdir "%SPARKCLR_HOME%\bin"
 if NOT EXIST "%SPARKCLR_HOME%\data" mkdir "%SPARKCLR_HOME%\data"
 if NOT EXIST "%SPARKCLR_HOME%\lib" mkdir "%SPARKCLR_HOME%\lib"
 if NOT EXIST "%SPARKCLR_HOME%\samples" mkdir "%SPARKCLR_HOME%\samples"
-if NOT EXIST "%SPARKCLR_HOME%\scripts" mkdir "%SPARKCLR_HOME%\scripts"
 
 @echo Assemble SparkCLR Scala components
 pushd "%CMDHOME%\..\scala"
@@ -46,39 +45,42 @@ call mvn.cmd clean
 @rem only in build.cmd to create the uber-package.
 @rem
 copy /y pom.xml %temp%\pom.xml.original
-powershell -f ..\build\script\patchpom.ps1 pom.xml 
+powershell -f ..\build\localscript\patchpom.ps1 pom.xml 
 copy /y pom.xml %temp%\pom.xml.patched
 
-@rem
-@rem prepare signing only when APPVEYOR_REPO_TAG is available
-@rem
 IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
-
-gpg2 --batch --yes --import ..\build\data\private_token.asc
-gpg2 --batch --yes --import ..\build\data\public_token.asc
-
-pushd %APPDATA%\gnupg 
-del /q trustdb.gpg 
-popd
-gpg2 --batch --yes --import-ownertrust < ..\build\data\ownertrustblob.txt
-
-gpg2 --list-key
-
-@rem ProjectVersion is set in downloadtools.ps1, based on AppVeyor-Repo-Tag
-if DEFINED ProjectVersion (
-  echo call mvn versions:set -DnewVersion=%ProjectVersion%
-  call mvn versions:set -DnewVersion=%ProjectVersion%
-)
-
-@rem build the package, sign, deploy to maven central
-call mvn clean deploy -Puber-jar -DdoSign=true -DdoRelease=true
-goto :mvndone
+    @rem
+    @rem prepare signing only when APPVEYOR_REPO_TAG is available
+    @rem
+    
+    gpg2 --batch --yes --import ..\build\data\private_token.asc
+    gpg2 --batch --yes --import ..\build\data\public_token.asc
+    
+    pushd %APPDATA%\gnupg 
+    del /q trustdb.gpg 
+    popd
+    gpg2 --batch --yes --import-ownertrust < ..\build\data\ownertrustblob.txt
+    
+    gpg2 --list-key
+    
+    @rem ProjectVersion is set in downloadtools.ps1, based on AppVeyor-Repo-Tag
+    if DEFINED ProjectVersion (
+      set SPARKCLR_NAME=spark-clr_2.10-%ProjectVersion%
+      echo call mvn versions:set -DnewVersion=%ProjectVersion%
+      call mvn versions:set -DnewVersion=%ProjectVersion%
+    )
+    
+    @rem build the package, sign, deploy to maven central
+    call mvn clean deploy -Puber-jar -DdoSign=true -DdoRelease=true
+    goto :mvndone
 
 :nosign
-@rem build the package
-call mvn.cmd package -Puber-jar
+
+    @rem build the package
+    call mvn.cmd package -Puber-jar
 
 :mvndone
+
 @rem
 @rem After uber package is created, restore Pom.xml
 @rem
@@ -128,12 +130,23 @@ copy /y Samples\Microsoft.Spark.CSharp\data\* "%SPARKCLR_HOME%\data\"
 popd
 
 @echo Assemble SparkCLR script components
-pushd "%CMDHOME%\..\scripts"
-copy /y *.cmd  "%SPARKCLR_HOME%\scripts\"
-popd
+xcopy /e /y "%CMDHOME%\..\scripts"  "%SPARKCLR_HOME%\scripts\"
 
 @echo zip run directory
 pushd %~dp0
 if not exist ".\target" (mkdir .\target)
-powershell -f .\zipdir.ps1 -dir "%SPARKCLR_HOME%" -target ".\target\run.zip"
+
+if not defined SPARKCLR_NAME (
+    powershell -f .\localscript\zipdir.ps1 -dir "%SPARKCLR_HOME%" -target ".\target\run.zip"
+)
+
+set SUBMIT-CMD=.\run\scripts\sparkclr-submit.cmd
+if defined SPARKCLR_NAME (
+    @rem update sparkclr version in sparkclr-submit batch file
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "((Get-Content %SUBMIT-CMD%) -replace '(set SPARKCLR_JAR=.*)', '(set SPARKCLR_JAR=%SPARKCLR_NAME%.jar)') | Set-Content %SUBMIT-CMD% -force"
+
+    @rem Create the zip file to be deployed to GitHub release
+    7z a .\target\%SPARKCLR_NAME%.zip run localscript
+)
+
 popd
