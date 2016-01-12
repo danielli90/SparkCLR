@@ -66,10 +66,11 @@ IF NOT "%APPVEYOR_REPO_TAG%" == "true" (goto :nosign)
     @rem ProjectVersion is set in downloadtools.ps1, based on AppVeyor-Repo-Tag
     if DEFINED ProjectVersion (
       set SPARKCLR_NAME=spark-clr_2.10-%ProjectVersion%
-      echo SPARKCLR_NAME=%SPARKCLR_NAME%
       echo call mvn versions:set -DnewVersion=%ProjectVersion%
       call mvn versions:set -DnewVersion=%ProjectVersion%
     )
+
+    echo SPARKCLR_NAME=%SPARKCLR_NAME%
     
     @rem build the package, sign, deploy to maven central
     call mvn clean deploy -Puber-jar -DdoSign=true -DdoRelease=true
@@ -147,6 +148,7 @@ if defined SPARKCLR_NAME (
     powershell -NoProfile -ExecutionPolicy Bypass -Command "((Get-Content %SUBMIT-CMD%) -replace '\(set SPARKCLR_JAR=.*\)', '(set SPARKCLR_JAR=%SPARKCLR_NAME%.jar)') | Set-Content %SUBMIT-CMD% -force"
 
     @rem Create the zip file to be deployed to GitHub release
+    echo 7z a .\target\%SPARKCLR_NAME%.zip run localscript
     7z a .\target\%SPARKCLR_NAME%.zip run localscript
 )
 

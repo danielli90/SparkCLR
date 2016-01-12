@@ -40,10 +40,9 @@ popd
 
 @rem downloadtools.ps1 sets ProjectVersion when invoked in AppVeyor
 if defined ProjectVersion (
-    set SPARKCLR_NAME=spark-clr_2.10-%ProjectVersion%
-    set SPARKCLR_JAR=%SPARKCLR_NAME%.jar
-    echo [RunSamples.cmd] SPARKCLR_JAR=%SPARKCLR_JAR%
+    set SPARKCLR_JAR=spark-clr_2.10-%ProjectVersion%.jar
 )
+
 
 SET CMDHOME=%~dp0
 @REM Remove trailing backslash \
@@ -60,6 +59,7 @@ set TEMP_DIR=%SPARKCLR_HOME%\Temp
 if NOT EXIST "%TEMP_DIR%" mkdir "%TEMP_DIR%"
 set SAMPLES_DIR=%SPARKCLR_HOME%\samples
 
+@echo [RunSamples.cmd] SPARKCLR_JAR=%SPARKCLR_JAR%
 @echo [RunSamples.cmd] JAVA_HOME=%JAVA_HOME%
 @echo [RunSamples.cmd] SPARK_HOME=%SPARK_HOME%
 @echo [RunSamples.cmd] SPARKCLR_HOME=%SPARKCLR_HOME%
