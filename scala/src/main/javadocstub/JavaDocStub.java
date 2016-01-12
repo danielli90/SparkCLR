@@ -11,7 +11,7 @@
 
 package javadocstub;
 /**
- * @author      SparkClr Team <sparkclrdev@microsoft.com>
+ * @author      SparkClr Team 
  * @version     1.0                 (current version number of program)
  * @since       2016-01-05          (the version of the package this class was first added to)
  */
