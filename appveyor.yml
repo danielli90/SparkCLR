@@ -12,6 +12,7 @@ environment:
 
 install:
   # - cmd: powershell -f dumpsoftware.ps1
+  - cmd: IF "%APPVEYOR_REPO_TAG%" == "true" (set ProjectVersion=%APPVEYOR_TAG_NAME:~1%)
   - cmd: nuget install secure-file -ExcludeVersion
   - cmd: secure-file\tools\secure-file -decrypt build\data\private_token.asc.enc -secret %securefile% -out build\data\private_token.asc
   - cmd: secure-file\tools\secure-file -decrypt build\data\public_token.asc.enc -secret %securefile% -out build\data\public_token.asc
@@ -21,6 +22,7 @@ install:
 
 #build C# solution and scala project
 build_script:
+  - cmd: echo [build_script] ProjectVersion=%ProjectVersion%
   - cmd: echo appvenyor env BUILD_NUMBER=[%APPVEYOR_BUILD_NUMBER%] BUILD_VERSION=[%APPVEYOR_BUILD_VERSION%] REPO_TAG=[%APPVEYOR_REPO_TAG%] REPO_TAG_NAME=[%APPVEYOR_REPO_TAG_NAME%] APPVEYOR=[%APPVEYOR%] CI=[%CI%]
   - cmd: SET PATH=%JAVA_HOME%\bin;%PATH%
   - cmd: SET PATH=%JAVA_HOME%\bin;%PATH%
